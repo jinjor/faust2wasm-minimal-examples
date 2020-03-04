@@ -1,0 +1,14 @@
+<button id="start">Start</button>
+<script type="module">
+  import "./js/Hello.js";
+  const nodeName = "Hello";
+  const assetPath = "js";
+  const ctx = new AudioContext();
+  const factory = new window[nodeName](ctx, assetPath);
+  document.getElementById("start").onclick = async e => {
+    e.target.disabled = true;
+    ctx.resume();
+    const node = await factory.load();
+    node.connect(ctx.destination);
+  };
+</script>

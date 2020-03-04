@@ -1,0 +1,25 @@
+<button id="start">Start</button>
+<script type="module">
+  import "./js/Hello.js";
+  const nodeName = "HelloPoly";
+  const assetPath = "js";
+  const channels = 16;
+  const ctx = new AudioContext();
+  const factory = new window[nodeName](ctx, channels, assetPath);
+  document.getElementById("start").onclick = async e => {
+    e.target.disabled = true;
+    ctx.resume();
+    const node = await factory.load();
+    await initMidi(node);
+    node.connect(ctx.destination);
+  };
+  async function initMidi(node) {
+    navigator.requestMIDIAccess().then(midiAccess => {
+      for (let input of midiAccess.inputs.values()) {
+        input.onmidimessage = e => {
+          node.midiMessage(e.data);
+        };
+      }
+    });
+  }
+</script>
